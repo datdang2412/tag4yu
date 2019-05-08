@@ -1,0 +1,53 @@
+stages:
+  - build
+  - deploy
+
+deploy_production:
+  stage: deploy
+  tags:
+    - deploy_to_production
+  environment: production
+  image: docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:stable-dind
+  script:
+    - mkdir -p ./data
+    - chmod -R 777 ./data
+    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.prod.yml --resolve-image always
+  only:
+    - master
+
+deploy_staging:
+  stage: deploy
+  tags:
+    - deploy_to_staging
+  environment: staging
+  image: docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:stable-dind
+  script:
+    - mkdir -p ./data
+    - chmod -R 777 ./data
+    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.stag.yml --resolve-image always
+  only:
+    - develop
+
+build_docker_images:
+  stage: build
+  tags:
+    - docker
+  environment: production
+  image: docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:stable-dind
+  script:
+    - docker login registry.gitlab.com -u "$GITLAB_USERNAME" -p "$GITLAB_PASSWORD"
+  only:
+    - develop
+    - master

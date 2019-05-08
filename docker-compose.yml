@@ -1,0 +1,12 @@
+version: '3.6'
+
+services:
+  tag4yu-couchbase:
+    image: couchbase:community
+    ports:
+      - "8091-8094:8091-8094"
+      - "11210:11210"
+    environment:
+      PASSWORD: b5KbcPtXe7EqmPC
+    volumes:
+      ./data:/opt/couchbase/var/lib/couchbase
