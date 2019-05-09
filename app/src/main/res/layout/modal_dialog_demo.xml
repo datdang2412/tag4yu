@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#fff">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="Current available users in database:"
+        android:textSize="10pt"
+        android:layout_marginVertical="5dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_height="wrap_content" android:layout_weight="0" />
+    <ListView
+        android:layout_width="match_parent"
+        android:id="@+id/listViewUserName"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></ListView>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:orientation="vertical"
+
+       android:layout_height="wrap_content">
+       <EditText android:textColor="#000"
+           android:textSize="20dp"
+           android:layout_height="wrap_content"
+           android:id="@+id/txtInputUserName"
+           android:hint="Input an indentity in list"
+           android:layout_width="match_parent"
+           android:layout_gravity="center_horizontal"
+           android:paddingTop="10dp"
+           android:paddingBottom="10dp"
+           android:layout_marginHorizontal="5dp"
+           android:paddingHorizontal="10dp"
+           android:layout_weight="1">
+       </EditText>
+
+       <Button android:layout_width="match_parent"
+           android:id="@+id/btnCheckUserMatch"
+           android:text="Check if User's identity match"
+           android:layout_gravity="center_vertical"
+           android:layout_height="wrap_content">
+
+       </Button>
+   </LinearLayout>
+</LinearLayout>
