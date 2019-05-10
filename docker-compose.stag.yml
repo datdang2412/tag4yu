@@ -13,8 +13,8 @@ services:
     environment:
       PASSWORD: b5KbcPtXe7EqmPC
     volumes:
-      - ./data/couchbase:/opt/couchbase/var/lib/couchbase
-      - ./data/sync-gateway:/opt/couchbase-sync-gateway/data
+      - /data/couchbase:/opt/couchbase/var/lib/couchbase
+      - /data/sync-gateway:/opt/couchbase-sync-gateway/data
       - ./sg-config.json:/etc/sync_gateway/config.json
     labels:
       - "traefik.docker.network=traefik"
@@ -22,7 +22,7 @@ services:
       - "traefik.backend=tag4yucouchbase"
       - "traefik.port=4984"
       - "traefik.frontend.entryPoints=http,https"
-      - "traefik.frontend.rule=Host:tag4yu.local.dev;PathPrefix:/"
+      - "traefik.frontend.rule=Host:tag4yu.sstechvn.com;PathPrefix:/"
       - "traefik.tags=tag4yu"
 networks:
   traefik:

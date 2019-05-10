@@ -32,7 +32,7 @@ deploy_staging:
   script:
     - mkdir -p /data/sync-gateway
     - mkdir -p /data/couchbase
-    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
+    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.stag.yml --resolve-image always
   only:
     - develop
 

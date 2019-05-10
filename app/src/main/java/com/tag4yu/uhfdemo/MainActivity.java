@@ -21,26 +21,37 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.couchbase.lite.AbstractReplicator;
+import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorChange;
+import com.couchbase.lite.ReplicatorChangeListener;
+import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
+import com.couchbase.lite.URLEndpoint;
 import com.zistone.uhf.ZstCallBackListen;
 import com.zistone.uhf.ZstUHFApi;
 
 
 import java.io.File;
+import java.net.URI;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
@@ -79,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     EditText userNameEditText;
     Button btnCheckUserMatch;
     ArrayList<String> userListDemo;
+    Replicator replicator;
     // couchbase
     Database database;
 
@@ -540,9 +552,9 @@ public class MainActivity extends AppCompatActivity {
                 String keyWord = userNameEditText.getText().toString();
                 Query query = QueryBuilder
                         .select(SelectResult.expression(Meta.id),
-                                SelectResult.property("indentity"))
+                                SelectResult.property("identity"))
                         .from(DataSource.database(database))
-                        .where(Expression.property("indentity").equalTo(Expression.string(keyWord)))
+                        .where(Expression.property("identity").equalTo(Expression.string(keyWord)))
                         .orderBy(Ordering.expression(Meta.id));
                 try {
                     ResultSet rs = query.execute();
@@ -561,18 +573,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCouchBase() {
+        Log.i(TAG, "Init couchbase ::  ");
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
+        Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
         userListDemo = new ArrayList<>();
         try {
             database = new Database("tag4u_db", config);
             Query query = QueryBuilder
                     .select(SelectResult.expression(Meta.id),
                             SelectResult.property("username"),
-                            SelectResult.property("indentity"))
+                            SelectResult.property("identity"))
                     .from(DataSource.database(database))
-                    .where(Expression.property("indentity").equalTo(Expression.string("6361273728"))
-                            .or(Expression.property("indentity").equalTo(Expression.string("3878052469")))
-                            .or(Expression.property("indentity").equalTo(Expression.string("0549975895"))))
                     .orderBy(Ordering.expression(Meta.id));
 
             try {
@@ -580,14 +592,16 @@ public class MainActivity extends AppCompatActivity {
                 ResultSet rs = query.execute();
 
                 for (Result result : rs) {
-                    userListDemo.add("username: " + result.getString("username") + " - indentity: "+ result.getString("indentity"));
+                    userListDemo.add("username: " + result.getString("username") + " - identity: "+ result.getString("identity"));
                     resultCount++;
                 }
 
-                if (resultCount == 0) {
-                    MutableDocument mutableDoc = new MutableDocument().setString("username", "user1").setString("indentity", "6361273728");
-                    MutableDocument mutableDoc1 = new MutableDocument().setString("username", "user2").setString("indentity", "3878052469");
-                    MutableDocument mutableDoc2 = new MutableDocument().setString("username", "user3").setString("indentity", "0549975895");
+                Log.i(TAG, "Result count ::  " + resultCount);
+
+                if (resultCount == 30) {
+                    MutableDocument mutableDoc = new MutableDocument().setString("username", "user1").setString("identity", "300833B2DDD9014000000000");
+                    MutableDocument mutableDoc1 = new MutableDocument().setString("username", "user2").setString("identity", "E20040843904023916106FC5");
+                    MutableDocument mutableDoc2 = new MutableDocument().setString("username", "user3").setString("identity", "E20040843904023917805EDB");
                     database.save(mutableDoc);
                     database.save(mutableDoc1);
                     database.save(mutableDoc2);
@@ -595,18 +609,69 @@ public class MainActivity extends AppCompatActivity {
                     Query newQuery = QueryBuilder
                             .select(SelectResult.expression(Meta.id),
                                     SelectResult.property("username"),
-                                    SelectResult.property("indentity"))
+                                    SelectResult.property("identity"))
                             .from(DataSource.database(database))
                             .orderBy(Ordering.expression(Meta.id));
 
                     ResultSet newResultSet = newQuery.execute();
                     for (Result result : newResultSet) {
-                        userListDemo.add("username: " + result.getString("username") + " - indentity: " + result.getString("indentity"));
+                        userListDemo.add("username: " + result.getString("username") + " - identity: " + result.getString("identity"));
                     }
                 }
             } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
+
+            // Create replicators to push and pull changes to and from the cloud.
+            Endpoint targetEndpoint = new URLEndpoint(new URI("ws://tag4yu.sstechvn.com:4984/tag4yu_db"));
+            ReplicatorConfiguration replConfig = new ReplicatorConfiguration(database, targetEndpoint);
+            replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+            replConfig.setContinuous(true);
+
+// Add authentication.
+            replConfig.setAuthenticator(new BasicAuthenticator("tag4yu", "tag4yu"));
+
+// Create replicator.
+            replicator = new Replicator(replConfig);
+
+// Listen to replicator change events.
+            replicator.addChangeListener(new ReplicatorChangeListener() {
+                @Override
+                public void changed(ReplicatorChange change) {
+                    if (change.getStatus().getError() != null) {
+                        Log.i(TAG, "Error code ::  " + change.getStatus().getError().getCode());
+                    }
+                    Log.i(TAG, "Change status ::  " + change.getStatus().toString());
+                    if (change.getStatus().getActivityLevel() == AbstractReplicator.ActivityLevel.IDLE) {
+                        userListDemo = new ArrayList<>();
+                        Query query = QueryBuilder
+                                .select(SelectResult.expression(Meta.id),
+                                        SelectResult.property("username"),
+                                        SelectResult.property("identity"))
+                                .from(DataSource.database(database))
+                                .orderBy(Ordering.expression(Meta.id));
+
+                        try {
+                            int resultCount = 0;
+                            ResultSet rs = query.execute();
+
+                            for (Result result : rs) {
+                                userListDemo.add("username: " + result.getString("username") + " - identity: "+ result.getString("identity"));
+                                resultCount++;
+                            }
+
+                            Log.i(TAG, "Result count ::  " + resultCount);
+
+                        } catch (CouchbaseLiteException e) {
+                            Log.e("Sample", e.getLocalizedMessage());
+                        }
+                    }
+                }
+            });
+
+// Start replication.
+            replicator.start();
+            Log.i(TAG, "Replicator started ::  ");
         } catch (Exception e) {
             e.printStackTrace();
         }
