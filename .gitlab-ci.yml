@@ -15,8 +15,6 @@ deploy_production:
   script:
     - mkdir -p /data/sync-gateway
     - mkdir -p /data/couchbase
-    - chmod -R 777 /data/sync-gateway
-    - chmod -R 777 /data/couchbase
     - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - master
@@ -34,8 +32,6 @@ deploy_staging:
   script:
     - mkdir -p /data/sync-gateway
     - mkdir -p /data/couchbase
-    - chmod -R 777 /data/sync-gateway
-    - chmod -R 777 /data/couchbase
     - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - develop
