@@ -1,10 +1,13 @@
 {
   "log": ["*"],
+  "adminInterface": ":4985",
   "databases": {
-    "db": {
+    "tag4yu_db": {
       "server": "http://tag4yucouchbase:8091",
       "bucket": "tag4yu",
-      "users": { "tag4yu": { "disabled": false, "admin_channels": ["*"], "password": "tag4yu" } }
+      "users": { "tag4yu": { "disabled": false, "admin_channels": ["*"], "password": "tag4yu" } },
+      "username": "tag4yu",
+      "password": "tag4yu"
     }
   }
 }

@@ -13,7 +13,7 @@ services:
     volumes:
       - /data/couchbase:/opt/couchbase/var/lib/couchbase
   tag4yusyncgateway:
-    image: couchbase/sync-gateway
+    image: couchbase/sync-gateway:community
     ports:
       - "4985:4985"
       - "4984:4984"
