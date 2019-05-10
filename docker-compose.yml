@@ -9,4 +9,4 @@ services:
     environment:
       PASSWORD: b5KbcPtXe7EqmPC
     volumes:
-      ./data:/opt/couchbase/var/lib/couchbase
+      - ./data:/opt/couchbase/var/lib/couchbase
