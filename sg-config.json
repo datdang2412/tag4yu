@@ -4,7 +4,7 @@
     "db": {
       "server": "http://tag4yucouchbase:8091",
       "bucket": "tag4yu",
-      "users": { "GUEST": { "disabled": false, "admin_channels": ["*"] } }
+      "users": { "tag4yu": { "disabled": false, "admin_channels": ["*"], "password": "tag4yu" } }
     }
   }
 }
