@@ -1,0 +1,5 @@
+#!/bin/sh
+
+exec 2>&1
+
+exec /opt/couchbase-sync-gateway/bin/sync_gateway /sg-config.json

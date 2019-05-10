@@ -3,11 +3,12 @@
   "adminInterface": ":4985",
   "databases": {
     "tag4yu_db": {
-      "server": "http://tag4yucouchbase:8091",
+      "server": "http://127.0.0.1:8091",
       "bucket": "tag4yu",
       "users": { "tag4yu": { "disabled": false, "admin_channels": ["*"], "password": "tag4yu" } },
       "username": "tag4yu",
-      "password": "tag4yu"
+      "password": "tag4yu",
+      "num_index_replicas": 0
     }
   }
 }

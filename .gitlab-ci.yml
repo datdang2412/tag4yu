@@ -48,6 +48,8 @@ build_docker_images:
     - docker:stable-dind
   script:
     - docker login registry.gitlab.com -u "$GITLAB_USERNAME" -p "$GITLAB_PASSWORD"
+    - docker build -t registry.gitlab.com/sstech/tag4yu/couchbase .
+    - docker push registry.gitlab.com/sstech/tag4yu/couchbase
   only:
     - develop
     - master
