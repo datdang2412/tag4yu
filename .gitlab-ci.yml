@@ -15,7 +15,7 @@ deploy_production:
   script:
     - mkdir -p ./data
     - chmod -R 777 ./data
-    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.prod.yml --resolve-image always
+    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - master
 
@@ -32,7 +32,7 @@ deploy_staging:
   script:
     - mkdir -p ./data
     - chmod -R 777 ./data
-    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.stag.yml --resolve-image always
+    - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - develop
 
