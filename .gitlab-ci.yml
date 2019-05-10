@@ -30,7 +30,8 @@ deploy_staging:
   services:
     - docker:stable-dind
   script:
-    - mkdir -p ./data
+    - mkdir -p ./data/sync-gateway
+    - mkdir -p ./data/couchbase
     - chmod -R 777 ./data
     - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:

@@ -1,12 +1,38 @@
 version: '3.6'
 
 services:
-  tag4yu-couchbase:
+  tag4yucouchbase:
     image: couchbase:community
     ports:
       - "8091-8094:8091-8094"
       - "11210:11210"
+    networks:
+      - traefik
     environment:
       PASSWORD: b5KbcPtXe7EqmPC
     volumes:
-      - ./data:/opt/couchbase/var/lib/couchbase
+      - ./data/couchbase:/opt/couchbase/var/lib/couchbase
+  tag4yusyncgateway:
+    image: couchbase/sync-gateway
+    ports:
+      - "4985:4985"
+      - "4984:4984"
+    environment:
+      PASSWORD: b5KbcPtXe7EqmPC
+    volumes:
+      - ./data/sync-gateway:/opt/couchbase-sync-gateway/data
+      - ./sg-config.json:/etc/sync_gateway/config.json
+    networks:
+      - traefik
+    labels:
+      - "traefik.docker.network=traefik"
+      - "traefik.enable=true"
+      - "traefik.backend=tag4yusyncgateway"
+      - "traefik.port=4984"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.frontend.rule=Host:tag4yu.sstechvn.com;PathPrefix:/"
+      - "traefik.tags=tag4yu"
+networks:
+  traefik:
+    external:
+      name: traefik_proxy

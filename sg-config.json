@@ -1,0 +1,10 @@
+{
+  "log": ["*"],
+  "databases": {
+    "db": {
+      "server": "http://tag4yucouchbase:8091",
+      "bucket": "tag4yu",
+      "users": { "GUEST": { "disabled": false, "admin_channels": ["*"] } }
+    }
+  }
+}
