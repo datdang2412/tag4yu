@@ -13,8 +13,10 @@ deploy_production:
   services:
     - docker:stable-dind
   script:
-    - mkdir -p ./data
-    - chmod -R 777 ./data
+    - mkdir -p /data/sync-gateway
+    - mkdir -p /data/couchbase
+    - chmod -R 777 /data/sync-gateway
+    - chmod -R 777 /data/couchbase
     - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - master
@@ -30,9 +32,10 @@ deploy_staging:
   services:
     - docker:stable-dind
   script:
-    - mkdir -p ./data/sync-gateway
-    - mkdir -p ./data/couchbase
-    - chmod -R 777 ./data
+    - mkdir -p /data/sync-gateway
+    - mkdir -p /data/couchbase
+    - chmod -R 777 /data/sync-gateway
+    - chmod -R 777 /data/couchbase
     - docker stack deploy tag4yu --with-registry-auth --compose-file ./docker-compose.yml --resolve-image always
   only:
     - develop
