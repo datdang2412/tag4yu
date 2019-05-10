@@ -11,7 +11,7 @@ services:
     environment:
       PASSWORD: b5KbcPtXe7EqmPC
     volumes:
-      - ./data/couchbase:/opt/couchbase/var/lib/couchbase
+      - /data/couchbase:/opt/couchbase/var/lib/couchbase
   tag4yusyncgateway:
     image: couchbase/sync-gateway
     ports:
@@ -20,7 +20,7 @@ services:
     environment:
       PASSWORD: b5KbcPtXe7EqmPC
     volumes:
-      - ./data/sync-gateway:/opt/couchbase-sync-gateway/data
+      - /data/sync-gateway:/opt/couchbase-sync-gateway/data
       - ./sg-config.json:/etc/sync_gateway/config.json
     networks:
       - traefik
