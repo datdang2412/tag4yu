@@ -127,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Khởi tạo UHF API
-//        mZstUHFApi = new ZstUHFApi(this, new MyZstUhfListen());
-//        mZstUHFApi.setModelPower(true, gpio1_num, gpio2_num);
+        mZstUHFApi = new ZstUHFApi(this, new MyZstUhfListen());
+        mZstUHFApi.setModelPower(true, gpio1_num, gpio2_num);
 
         // Test và demo với Couchbase
         this.initCouchBase();
-        this.initAndShowModalDialog();
+//        this.initAndShowModalDialog();
     }
 
 
