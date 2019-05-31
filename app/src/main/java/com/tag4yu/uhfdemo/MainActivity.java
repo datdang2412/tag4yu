@@ -263,6 +263,59 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    public boolean checkEPC(final String epc) {
+        Query query = QueryBuilder
+                .select(SelectResult.expression(Meta.id),
+                        SelectResult.property("identity"))
+                .from(DataSource.database(database))
+                .where(Expression.property("identity").equalTo(Expression.string(epc)))
+                .orderBy(Ordering.expression(Meta.id));
+        try {
+            ResultSet rs = query.execute();
+            int resultCount = 0;
+            for(Result _: rs) { resultCount++; }
+            if (resultCount > 0) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (arrEPC == null)
+                            return;
+                        for (int i = 0; i < arrEPC.size(); i++) {
+                            if (arrEPC.get(i).startsWith(epc)) {
+                                //Trùng
+                                return;
+                            }
+                        }
+                        String newEpc = epc + ": passed";
+                        arrEPC.add(newEpc);
+                        lstEPC.setAdapter(adapter);
+                    }
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (arrEPC == null)
+                            return;
+                        for (int i = 0; i < arrEPC.size(); i++) {
+                            if (arrEPC.get(i).startsWith(epc)) {
+                                //Trùng
+                                return;
+                            }
+                        }
+                        String newEpc = epc + ": failed";
+                        arrEPC.add(newEpc);
+                        lstEPC.setAdapter(adapter);
+                    }
+                });
+            }
+            return resultCount > 0;
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -362,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
                                 epc = data.substring(16, 16 + plen - 10);
                                 //Log.d(TAG, "epc = "+ epc);
                             }
-                            MainActivity.getInstance().checkAndAddEPC(epc);
+                            MainActivity.getInstance().checkEPC(epc);
 
 
                             //addToList(listEPC, epc);
@@ -598,8 +651,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i(TAG, "Result count ::  " + resultCount);
 
-                if (resultCount == 30) {
-                    MutableDocument mutableDoc = new MutableDocument().setString("username", "user1").setString("identity", "300833B2DDD9014000000000");
+                if (resultCount == 6) {
+                    MutableDocument mutableDoc = new MutableDocument().setString("username", "user1").setString("identity", "33B2DDD90140000000003132");
                     MutableDocument mutableDoc1 = new MutableDocument().setString("username", "user2").setString("identity", "E20040843904023916106FC5");
                     MutableDocument mutableDoc2 = new MutableDocument().setString("username", "user3").setString("identity", "E20040843904023917805EDB");
                     database.save(mutableDoc);
